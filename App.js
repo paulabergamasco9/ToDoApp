@@ -15,7 +15,6 @@ export default function App() {
     }
   };
 
-  // Passo 3: O Descompactador (Parser)
   const resgatarDadosLocal = async () => {
     try {
       const textoLido = await AsyncStorage.getItem('minhas_tarefas');
@@ -28,6 +27,10 @@ export default function App() {
     }
   };
 
+  useEffect(()=> {
+    resgatarDadosLocal();
+  }, [])
+
   const handleAdicionarTarefa = () => {
     if (tarefaAtual.trim() === '') {
       return;
@@ -36,7 +39,8 @@ export default function App() {
     const novaLista = [...listaTarefas, tarefaAtual];
     setListaTarefas(novaLista);
     salvarDadosLocal(novaLista); 
-  };
+    setTarefaAtual('');
+    };
 
   return (
     <View>
@@ -70,3 +74,77 @@ export default function App() {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  scrollArea: {
+    flex: 1, 
+    backgroundColor: '#fff',
+  },
+  container: {
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    paddingVertical: 50,
+    paddingHorizontal: 20,
+  },
+  contadorTexto: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonAdd: {
+    backgroundColor: '#007bff',
+    paddingVertical: 15,
+    paddingHorizontal: 22,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  title: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    marginTop: 35, 
+    marginBottom: 20, 
+  },
+  inputContainer: { 
+    flexDirection: 'row', 
+    marginBottom: 20,
+    width: '100%',
+  },
+  input: { 
+    flex: 1, 
+    backgroundColor: '#fff', 
+    padding: 15, 
+    borderRadius: 8, 
+    borderWidth: 1, 
+    borderColor: '#ccc', 
+    marginRight: 10,
+  },
+  listaBox: {
+    marginTop: 10,
+    width: '100%',
+  },
+  cardTarefa: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderLeftWidth: 5,
+    borderLeftColor: '#007bff',
+  },
+  textoTarefa: { 
+    fontSize: 16, 
+  }
+  })
