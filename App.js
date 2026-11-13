@@ -1,23 +1,42 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
 export default function App() {
-const [tarefaAtual, setTarefaAtual] = useState('');
-const [listaTarefas, setListaTarefas] = useState([]);
+  const [tarefaAtual, setTarefaAtual] = useState('');
+  const [listaTarefas, setListaTarefas] = useState([]);
 
-const handleAdicionarTarefa = () => {
-  if (tarefaAtual.trim() === '') {
-    return;
-  }
-  setListaTarefas([...listaTarefas, tarefaAtual]);
-  setTarefaAtual('');
-}
+  const salvarDadosLocal = async (listaParaSalvar) => {
+    try {
+      const listaString = JSON.stringify(listaParaSalvar);
+      await AsyncStorage.setItem('minhas_tarefas', listaString);
+    } catch (error) {
+      console.log('Erro ao salvar dados:', error);
+    }
+  };
 
-const salvarTeste = async () => {
-    await AsyncStorage.setItem('chave_secreta', 'Felipe');
-    console.log('Teste salvo no cofre!');
-}
+  // Passo 3: O Descompactador (Parser)
+  const resgatarDadosLocal = async () => {
+    try {
+      const textoLido = await AsyncStorage.getItem('minhas_tarefas');
+      if (textoLido !== null) {
+        const listaInflada = JSON.parse(textoLido);
+        setListaTarefas(listaInflada);
+      }
+    } catch (error) {
+      console.log('Erro ao resgatar dados:', error);
+    }
+  };
+
+  const handleAdicionarTarefa = () => {
+    if (tarefaAtual.trim() === '') {
+      return;
+    }
+    
+    const novaLista = [...listaTarefas, tarefaAtual];
+    setListaTarefas(novaLista);
+    salvarDadosLocal(novaLista); 
+  };
 
   return (
     <View>
@@ -36,9 +55,9 @@ const salvarTeste = async () => {
       </View>
 
       <ScrollView
-      style={styles.listaBox}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
+        style={styles.listaBox}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.listaBox}>
           {listaTarefas.map((tarefa, index) => (
@@ -50,80 +69,4 @@ const salvarTeste = async () => {
       </ScrollView>
     </View>
   );
-   
 }
-
-const styles = StyleSheet.create({
-  scrollArea: {
-    flex: 1, 
-    backgroundColor: '#fff',
-  },
-  container: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    paddingVertical: 50,
-    paddingHorizontal: 20,
-  },
-  contadorTexto: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-  },
-  button: {
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonAdd: {
-    backgroundColor: '#007bff',
-    paddingVertical: 15,
-    paddingHorizontal: 22,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  title: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    marginTop: 35, 
-    marginBottom: 20, 
-  },
-  inputContainer: { 
-    flexDirection: 'row', 
-    marginBottom: 20,
-    width: '100%',
-  },
-  input: { 
-    flex: 1, 
-    backgroundColor: '#fff', 
-    padding: 15, 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: '#ccc', 
-    marginRight: 10,
-  },
-  listaBox: {
-    marginTop: 10,
-    width: '100%',
-  },
-  cardTarefa: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    borderLeftWidth: 5,
-    borderLeftColor: '#007bff',
-  },
-  textoTarefa: { 
-    fontSize: 16, 
-  },
-});0
